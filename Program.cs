@@ -6,6 +6,12 @@ namespace ChangeLogonBG
 {
     class Program
     {
+        [DllImport("kernel32.dll")]
+        static extern IntPtr GetConsoleWindow();
+
+        [DllImport("user32.dll")]
+        static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
+        
         static void Main(string[] args)
         {
             string logonnewbgpath = string.Empty;
@@ -21,7 +27,7 @@ namespace ChangeLogonBG
             }
 
             if (hideConsole)
-                NativeMethods.HideConsoleWindow();
+                ShowWindow(GetConsoleWindow(), 0); //0 - SW_HIDE
 
             if (IsStringEmpty(logonnewbgpath))
                 Environment.Exit(1);
@@ -39,19 +45,6 @@ namespace ChangeLogonBG
 
             Environment.Exit(0);
         }
-        static bool IsStringEmpty(string str)
-        {
-            return string.IsNullOrEmpty(str) && string.IsNullOrWhiteSpace(str);
-        }
-    }
-    internal static class NativeMethods
-    {
-        [DllImport("kernel32.dll")]
-        private static extern IntPtr GetConsoleWindow();
-
-        [DllImport("user32.dll")]
-        private static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
-
-        public static void HideConsoleWindow() => ShowWindow(GetConsoleWindow(), 0); //0 - SW_HIDE
+        static bool IsStringEmpty(string str) => string.IsNullOrEmpty(str) && string.IsNullOrWhiteSpace(str);
     }
 }
